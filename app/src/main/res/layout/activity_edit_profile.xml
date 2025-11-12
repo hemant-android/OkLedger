@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".ui.editprofile.EditProfileActivity">
+
+    <!-- Toolbar -->
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_inner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_20dp"
+        android:layout_marginTop="@dimen/dimen_32dp" />
+
+    <!-- Profile Image -->
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dimen_40dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfileBorder"
+            android:layout_width="@dimen/dimen_100dp"
+            android:layout_height="@dimen/dimen_100dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CircleImage"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="@dimen/dimen_1dp" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="@dimen/dimen_80dp"
+            android:layout_height="@dimen/dimen_80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_profile_default"
+            android:tint="@color/colorPrimary"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CircleImage" />
+
+        <ImageView
+            android:id="@+id/imgEdit"
+            android:layout_width="@dimen/dimen_24dp"
+            android:layout_height="@dimen/dimen_24dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_edit" />
+    </FrameLayout>
+
+    <!-- Name -->
+    <EditText
+        android:id="@+id/etName"
+        style="@style/S12Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dimen_20dp"
+        android:layout_marginTop="@dimen/dimen_24dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="@string/text_enter_your_name"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:padding="@dimen/dimen_12dp" />
+
+    <!-- Phone -->
+    <EditText
+        android:id="@+id/etPhone"
+        style="@style/S12Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dimen_20dp"
+        android:layout_marginTop="@dimen/dimen_16dp"
+        android:background="@drawable/bg_edittext"
+        android:hint="@string/text_enter_phone_number"
+        android:importantForAutofill="no"
+        android:inputType="phone"
+        android:padding="@dimen/dimen_12dp" />
+
+    <!-- Address -->
+    <EditText
+        android:id="@+id/etAddress"
+        style="@style/S12Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dimen_20dp"
+        android:layout_marginTop="@dimen/dimen_16dp"
+        android:background="@drawable/bg_edittext"
+        android:gravity="top"
+        android:hint="@string/text_enter_address"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:maxLines="3"
+        android:padding="@dimen/dimen_12dp" />
+
+    <!-- Submit -->
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dimen_20dp"
+        android:layout_marginTop="@dimen/dimen_40dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="@string/text_update"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_14sp" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

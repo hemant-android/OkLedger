@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_drawer_header"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_16dp">
+
+    <!-- Profile Icon / App Logo -->
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_40dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfileBorder"
+            android:layout_width="@dimen/dimen_100dp"
+            android:layout_height="@dimen/dimen_100dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CircleImage"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="@dimen/dimen_1dp" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="@dimen/dimen_80dp"
+            android:layout_height="@dimen/dimen_80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_profile_default"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CircleImage" />
+
+        <ImageView
+            android:id="@+id/imgEdit"
+            android:layout_width="@dimen/dimen_24dp"
+            android:layout_height="@dimen/dimen_24dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_edit" />
+    </FrameLayout>
+
+    <!-- User Name -->
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/S16Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="@dimen/dimen_5dp"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+    <!-- Phone -->
+    <TextView
+        android:id="@+id/tvUserContact"
+        style="@style/S14Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/dimen_5dp"
+        android:text="+91 999 999 9999"
+        android:textColor="@color/white" />
+
+</LinearLayout>

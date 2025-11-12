@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="@string/text_home_menu" />
+
+    <item
+        android:id="@+id/nav_parties"
+        android:title="@string/text_parties_menu" />
+
+    <item
+        android:id="@+id/nav_statement"
+        android:title="@string/text_statement_menu" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="@string/text_logout" />
+
+</menu>

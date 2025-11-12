@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_24dp">
+
+    <!-- App Icon -->
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginBottom="@dimen/dimen_32dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_okledger_logo" />
+
+    <!-- Heading -->
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/S18SemiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_20dp"
+        android:text="@string/text_enter_mobile_number"
+        android:textColor="@color/black" />
+
+    <!-- Mobile Number Input -->
+    <EditText
+        android:id="@+id/etMobile"
+        style="@style/S16Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_24dp"
+        android:layout_marginEnd="@dimen/dimen_24dp"
+        android:background="@drawable/bg_edittext_outline"
+        android:gravity="center"
+        android:hint="@string/hint_mobile_number"
+        android:inputType="phone"
+        android:maxLength="10"
+        android:padding="@dimen/dimen_14dp" />
+
+    <!-- Continue Button -->
+    <Button
+        android:id="@+id/btnContinue"
+        style="@style/S16Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_24dp"
+        android:layout_marginTop="@dimen/dimen_24dp"
+        android:layout_marginEnd="@dimen/dimen_24dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="@string/text_continue"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+</LinearLayout>
