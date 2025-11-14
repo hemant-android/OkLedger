@@ -20,7 +20,7 @@ import com.okledger.app.base.BaseActivity
 import com.okledger.app.databinding.ActivityStatementBinding
 import com.okledger.app.ui.viewmodel.StatementViewModel
 import com.okledger.app.utils.DateUtils
-import com.okledger.app.utils.PdfStatementGenerator
+import com.okledger.app.utils.PdfStatementGeneratorOld
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
@@ -44,21 +44,21 @@ class StatementActivity : BaseActivity<ActivityStatementBinding>() {
         binding.toolbar.imgBack.setOnClickListener {
             finish()
         }
-        binding.toolbar.btnDownloadStatement.setOnClickListener {
+        binding.toolbar.imgDownloadStatement.setOnClickListener {
             val items = viewModel.statementItems.value ?: emptyList()
-            PdfStatementGenerator.createStatementPdf(this, items)
+            PdfStatementGeneratorOld.createStatementPdf(this, items)
         }
 
         // Observe transactions
         viewModel.statementItems.observe(this) { list ->
             if (!list.isNullOrEmpty()) {
                 binding.rvStatement.visibility = View.VISIBLE
-                binding.toolbar.btnDownloadStatement.visibility = View.VISIBLE
+                binding.toolbar.imgDownloadStatement.visibility = View.VISIBLE
                 binding.emptyView.root.visibility = View.GONE
                 adapter.submitList(list)
             } else {
                 binding.rvStatement.visibility = View.GONE
-                binding.toolbar.btnDownloadStatement.visibility = View.GONE
+                binding.toolbar.imgDownloadStatement.visibility = View.GONE
                 binding.emptyView.root.visibility = View.VISIBLE
             }
         }
