@@ -141,6 +141,25 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--Search party based on text-->
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dimen_20dp"
+                android:layout_marginTop="@dimen/dimen_12dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="@string/text_search_party"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="@dimen/dimen_12dp"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="gone" />
+
+
             <!-- Party List -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvParties"

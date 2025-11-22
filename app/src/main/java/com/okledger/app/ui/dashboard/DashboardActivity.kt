@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.okledger.app.R
 import com.okledger.app.base.BaseActivity
+import com.okledger.app.data.model.PartyWithTotals
 import com.okledger.app.databinding.ActivityDashboardBinding
 import com.okledger.app.databinding.DrawerHeaderBinding
 import com.okledger.app.ui.addparty.AddPartyActivity
@@ -32,6 +34,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
     // Header Views
     private lateinit var headerBinding: DrawerHeaderBinding
 
+    private var fullPartyList: List<PartyWithTotals> = emptyList()
+
+
     override fun getViewBinding() = ActivityDashboardBinding.inflate(layoutInflater)
 
     @SuppressLint("SetTextI18n")
@@ -43,6 +48,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         setupDrawerMenu()
         setupRecyclerView()
         setupObservers()
+        setSearch()
         setupFabAndEmptyView()
     }
 
@@ -99,9 +105,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
     }
 
     private fun setupTabs() {
-//        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Purchases"))
-//        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Sales"))
-
         // Add tabs dynamically from enum
         LedgerType.entries.forEach { type ->
             binding.tabLayout.addTab(
@@ -178,13 +181,31 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         binding.rvParties.adapter = adapter
     }
 
+    private fun setSearch() {
+        binding.etSearch.addTextChangedListener { text ->
+//            viewModel.setSearchQuery(text.toString())
+            applySearchFilter(text.toString())
+        }
+
+    }
+
     /** Observe LiveData from ViewModel */
     @SuppressLint("SetTextI18n")
     private fun setupObservers() {
         viewModel.partyWithTotalsList.observe(this) { parties ->
+            if (fullPartyList.isNotEmpty()) {
+                fullPartyList = emptyList()
+            }
+            fullPartyList = parties
             adapter.submitList(parties)
             updateUIForPartyList(parties)
         }
+
+        viewModel.filteredParties.observe(this) { parties ->
+            adapter.submitList(parties)
+            updateUIForPartyList(parties)
+        }
+
 
         viewModel.dashboardSummary.observe(this) { summary ->
             updateDashboardSummary(summary.totalGiven, summary.totalReceived)
@@ -194,9 +215,28 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
     /** Update UI based on party list availability */
     private fun updateUIForPartyList(parties: List<Any>) {
         val hasData = parties.isNotEmpty()
+        binding.etSearch.visibility = if (hasData) View.VISIBLE else View.GONE
         binding.rvParties.visibility = if (hasData) View.VISIBLE else View.GONE
         binding.layoutSummary.visibility = if (hasData) View.VISIBLE else View.GONE
         binding.emptyView.root.visibility = if (hasData) View.GONE else View.VISIBLE
+    }
+
+    private fun applySearchFilter(query: String) {
+        val q = query.trim().lowercase(Locale.getDefault())
+
+        val filtered = if (q.isEmpty()) {
+            fullPartyList
+        } else {
+            fullPartyList.filter { item ->
+                item.party.name.contains(q, ignoreCase = true) ||
+                        (item.party.name?.contains(q, ignoreCase = true) ?: false)
+            }
+        }
+
+        adapter.submitList(filtered)  // only update recycler items
+
+        // Optional: show "No results" text under search (not full empty layout)
+//        binding.tvNoSearchResults.visibility =if (filtered.isEmpty() && q.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     /** Update balance summary */

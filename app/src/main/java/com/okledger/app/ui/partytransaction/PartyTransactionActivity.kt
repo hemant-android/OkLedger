@@ -84,7 +84,8 @@ class PartyTransactionActivity : BaseActivity<ActivityPartyTransactionBinding>()
 
         binding.toolbar.imgDownloadStatement.setOnClickListener {
 
-            showDateRangeDialog(it)
+//            showDateRangeDialog(it)
+            openDateRangePicker()
         }
 
 
@@ -168,23 +169,22 @@ class PartyTransactionActivity : BaseActivity<ActivityPartyTransactionBinding>()
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun openDateRangePicker() {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
+
         val constraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now()) // Disable future dates
-            .setStart(MaterialDatePicker.thisMonthInUtcMilliseconds()) // Start of current month
-            .setEnd(today) // Up to today
             .build()
 
-        val picker = MaterialDatePicker.Builder.dateRangePicker()
+        val picker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Date Range")
+            .setSelection(null)
             .setCalendarConstraints(constraints)
             .setTheme(R.style.CustomDatePickerTheme)
             .build()
 
         picker.show(supportFragmentManager, "DATE_RANGE_PICKER")
 
-        picker.addOnPositiveButtonClickListener { selection ->
-            val startDate = selection.first ?: return@addOnPositiveButtonClickListener
-            val endDate = selection.second ?: return@addOnPositiveButtonClickListener
+        picker.addOnPositiveButtonClickListener { startDate ->
+            val endDate = today
 
             val endOfDay = Calendar.getInstance().apply {
                 timeInMillis = endDate
