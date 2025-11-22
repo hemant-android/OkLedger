@@ -34,7 +34,7 @@ class EditPartyViewModel @Inject constructor(
     }
 
     fun updateParty(id: Int, name: String, mobile: String,date: Long,openingBalance: Double,
-                    openingType: String,ledgerType: LedgerType) {
+                    openingType: String,address: String, ledgerType: LedgerType) {
         viewModelScope.launch {
             val existingParty = repository.getPartyByIdAndLedgerType(id,ledgerType.name)
             if (existingParty != null) {
@@ -43,6 +43,7 @@ class EditPartyViewModel @Inject constructor(
                 val updatedParty = existingParty.copy(
                     name = name,
                     mobile = mobile,
+                    address = address,
                     createdDate = date,
                     openingBalance = openingBalance,
                     openingType = openingType,

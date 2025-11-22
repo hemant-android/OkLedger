@@ -11,9 +11,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddPartyViewModel @Inject constructor(private val repository: LedgerRepository) : ViewModel() {
-    fun addParty(name: String, mobile: String,date: Long,ledgerType: LedgerType) {
+    fun addParty(name: String, mobile: String,date: Long,address: String, ledgerType: LedgerType) {
         viewModelScope.launch {
-            repository.insertParty(Party(name = name, mobile = mobile, createdDate = date,ledgerType = ledgerType.value))
+            repository.insertParty(Party(name = name, mobile = mobile, address = address, createdDate = date,ledgerType = ledgerType.value))
         }
     }
 }

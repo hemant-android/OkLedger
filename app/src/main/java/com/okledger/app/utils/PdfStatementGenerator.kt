@@ -3,7 +3,11 @@ package com.okledger.app.utils
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Build
@@ -11,36 +15,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import android.text.StaticLayout
-import android.text.Layout
-import android.text.TextPaint
 import com.okledger.app.data.model.Transaction
 
 object PdfStatementGenerator {
-
-    // ============================================================
-    // MULTILINE TEXT HANDLER
-    // ============================================================
-    @Suppress("DEPRECATION")
-    private fun drawMultilineText(
-        text: String,
-        x: Float,
-        y: Float,
-        paint: Paint,
-        canvas: Canvas,
-        maxWidth: Int
-    ): Float {
-        val tp = TextPaint(paint)
-        val layout = StaticLayout(text, tp, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)
-
-        canvas.save()
-        canvas.translate(x, y)
-        layout.draw(canvas)
-        canvas.restore()
-
-        return layout.height.toFloat()
-    }
-
     // ============================================================
     // SEPARATOR LINE (NORMAL OR DOTTED)
     // ============================================================
@@ -86,7 +63,11 @@ object PdfStatementGenerator {
     private fun drawHeader(
         canvas: Canvas,
         partyName: String,
-        pageWidth: Int
+        pageWidth: Int,
+        fromDate: Long,
+        toDate: Long,
+        farmName: String,
+        farmAddress: String
     ): Float {
 
         val titlePaint = Paint().apply {
@@ -101,35 +82,60 @@ object PdfStatementGenerator {
             typeface = Typeface.DEFAULT_BOLD
         }
 
-        // Column titles
-        val colDate = 40f
-        val colNote = 220f
-        val colReceived = 600f
-        val colGiven = 800f
-        val colBalance = 1000f
+        var currentY = 80f
 
-        canvas.apply {
-            titlePaint.textSize = 40f
-            drawText(partyName, (pageWidth / 2).toFloat(), 80f, titlePaint)
-
-            titlePaint.textSize = 32f
-            drawText("Ok Ledger", (pageWidth / 2).toFloat(), 130f, titlePaint)
-
-            titlePaint.textSize = 28f
-            drawText("Statement Report", (pageWidth / 2).toFloat(), 180f, titlePaint)
+        // Farm Name (conditionally visible)
+        if (farmName.isNotBlank()) {
+            titlePaint.textSize = 50f
+            canvas.drawText(farmName, (pageWidth / 2).toFloat(), currentY, titlePaint)
+            currentY += 50f
         }
 
+        // Farm Address (conditionally visible)
+        if (farmAddress.isNotBlank()) {
+            titlePaint.textSize = 24f
+            canvas.drawText(farmAddress, (pageWidth / 2).toFloat(), currentY, titlePaint)
+            currentY += 50f
+        }
+
+        // Ok Ledger Title
+        titlePaint.textSize = 32f
+        canvas.drawText("Ok Ledger", (pageWidth / 2).toFloat(), currentY, titlePaint)
+        currentY += 50f
+
+        val from = DateUtils.formatDateOrTimeInvoice(fromDate)
+        val to = DateUtils.formatDateOrTimeInvoice(toDate)
+
+        titlePaint.textSize = 24f
+        canvas.drawText("( From $from To $to )", (pageWidth / 2).toFloat(), currentY, titlePaint)
+        currentY += 50f
+
+        // Party Name
+        titlePaint.textSize = 32f
+        canvas.drawText(partyName, (pageWidth / 2).toFloat(), currentY, titlePaint)
+        currentY += 50f
+
+        // Statement Report
+//        titlePaint.textSize = 32f
+//        canvas.drawText("Statement Report", (pageWidth / 2).toFloat(), currentY, titlePaint)
+//        currentY += 50f
+
         // Underline with spacing below
-        drawSeparatorLine(canvas, 210f, pageWidth)
-        val nextY = 270f
+        drawSeparatorLine(canvas, currentY, pageWidth)
+        currentY += 60f
 
-        canvas.drawText("Date", colDate, nextY, headerPaint)
-        canvas.drawText("Note", colNote, nextY, headerPaint)
-        canvas.drawText("Received", colReceived, nextY, headerPaint)
-        canvas.drawText("Given", colGiven, nextY, headerPaint)
-        canvas.drawText("Balance", colBalance, nextY, headerPaint)
+        // Column titles
+        val colDate = 40f
+        val colReceived = 400f
+        val colGiven = 700f
+        val colBalance = 950f
 
-        return nextY + 40f // return new Y pointer
+        canvas.drawText("Date", colDate, currentY, headerPaint)
+        canvas.drawText("Received", colReceived, currentY, headerPaint)
+        canvas.drawText("Given", colGiven, currentY, headerPaint)
+        canvas.drawText("Balance", colBalance, currentY, headerPaint)
+
+        return currentY + 40f // return new Y pointer
     }
 
     // ============================================================
@@ -147,41 +153,30 @@ object PdfStatementGenerator {
             textSize = 26f
         }
 
-        // Column positions
         val colDate = 40f
-        val colNote = 220f
-        val colReceived = 600f
-        val colGiven = 800f
-        val colBalance = 1000f
+        val colReceived = 400f
+        val colGiven = 700f
+        val colBalance = 950f
 
-        val dateStr = DateUtils.formatDateOrTime(tx.date)
-        val note = tx.note ?: ""
-
-        val noteHeight = drawMultilineText(
-            note, colNote, y, valuePaint, canvas, 350
-        )
-
-        val rowHeight = maxOf(40f, noteHeight + 10f)
+        val dateStr = DateUtils.formatDateOrTimeInvoice(tx.date)
 
         canvas.drawText(dateStr, colDate, y + 30f, valuePaint)
-        // ----- Draw Received only if > 0 -----
+
         val received = tx.receivedAmount()
         if (received > 0.0) {
             canvas.drawText("₹%.2f".format(received), colReceived, y + 30f, valuePaint)
         }
 
-        // ----- Draw Given only if > 0 -----
         val given = tx.givenAmount()
         if (given > 0.0) {
             canvas.drawText("₹%.2f".format(given), colGiven, y + 30f, valuePaint)
         }
 
-        // ----- Always draw balance -----
         canvas.drawText("₹%.2f".format(runningBalance), colBalance, y + 30f, valuePaint)
 
-        return y + rowHeight + 20f
-
+        return y + 60f // fixed row height now that Note is removed
     }
+
 
     // Helpers
     private fun Transaction.receivedAmount() = if (type.equals("Received", true)) amount else 0.0
@@ -211,7 +206,12 @@ object PdfStatementGenerator {
         val totalGiven = txns.sumOf { it.givenAmount() }
         val finalBalance = totalReceived - totalGiven
 
-        canvas.drawText("Total Received: ₹${"%.2f".format(totalReceived)}", 40f, spaceY, footerPaint)
+        canvas.drawText(
+            "Total Received: ₹${"%.2f".format(totalReceived)}",
+            40f,
+            spaceY,
+            footerPaint
+        )
         canvas.drawText("Total Given: ₹${"%.2f".format(totalGiven)}", 450f, spaceY, footerPaint)
         canvas.drawText("Balance: ₹${"%.2f".format(finalBalance)}", 900f, spaceY, footerPaint)
     }
@@ -220,8 +220,10 @@ object PdfStatementGenerator {
     // MAIN PDF CREATOR
     // ============================================================
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun createStatementPdf(context: Context, partyName: String, txns: List<Transaction>) {
-
+    fun createStatementPdf(
+        context: Context, partyName: String, txns: List<Transaction>, fromDate: Long,
+        toDate: Long, farmName: String, farmAddress: String
+    ) {
         if (txns.isEmpty()) {
             Toast.makeText(context, "No transactions available!", Toast.LENGTH_SHORT).show()
             return
@@ -243,7 +245,7 @@ object PdfStatementGenerator {
         drawWatermark(canvas, pageWidth, pageHeight)
 
         // Draw header
-        y = drawHeader(canvas, partyName, pageWidth)
+        y = drawHeader(canvas, partyName, pageWidth,fromDate,toDate,farmName,farmAddress)
 
         // ---------------- MAIN LOOP ----------------
         txns.forEach { tx ->
@@ -257,7 +259,15 @@ object PdfStatementGenerator {
                 canvas = page.canvas
 
                 drawWatermark(canvas, pageWidth, pageHeight)
-                y = drawHeader(canvas, partyName, pageWidth)
+                y = drawHeader(
+                    canvas,
+                    partyName,
+                    pageWidth,
+                    fromDate,
+                    toDate,
+                    farmName,
+                    farmAddress
+                )
             }
 
             runningBalance += (tx.receivedAmount() - tx.givenAmount())

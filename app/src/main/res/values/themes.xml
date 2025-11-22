@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme -->
-    <style name="Theme.OkLedger" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.OkLedger" parent="Theme.MaterialComponents.Light.NoActionBar">
 
         <!-- Primary brand colors -->
         <item name="colorPrimary">@color/colorPrimary</item> <!-- #1976D2 -->
@@ -201,5 +201,16 @@
     <style name="ShapeAppearanceOverlay.CircleImage" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomDatePickerTheme" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarFullscreenTheme">
+            @style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen
+        </item>
+    </style>
+
+    <style name="CustomCalendarStyle" parent="Widget.MaterialComponents.MaterialCalendar">
+        <item name="android:maxLines">1</item>
     </style>
 </resources>

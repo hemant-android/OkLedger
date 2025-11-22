@@ -45,13 +45,14 @@ class AddPartyActivity : BaseActivity<ActivityAddPartyBinding>() {
         }
 
         binding.btnConfirm.setOnClickListener {
-            val name = binding.etPartyName.text.toString()
-            val mobile = binding.etPartyMobile.text.toString()
+            val name = binding.etPartyName.text.toString().trim()
+            val mobile = binding.etPartyMobile.text.toString().trim()
+            val address = binding.etPartyAddress.text.toString().trim()
             if (name.isEmpty()) {
                 binding.etPartyName.requestFocus()
                 Toast.makeText(this, "Enter party name", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.addParty(name, mobile,selectedDate,selectedLedgerType)
+                viewModel.addParty(name, mobile,selectedDate,address,selectedLedgerType)
                 Toast.makeText(this, "Party added", Toast.LENGTH_SHORT).show()
                 finish()
             }

@@ -23,4 +23,18 @@ object DateUtils {
             SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
         }
     }
+
+    fun formatDateOrTimeInvoice(timestamp: Long): String {
+        val date = Date(timestamp)
+        val cal = Calendar.getInstance().apply { time = date }
+        val today = Calendar.getInstance()
+
+        return if (cal.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+            cal.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
+        ) {
+            SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
+        } else {
+            SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
+        }
+    }
 }

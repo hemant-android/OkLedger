@@ -23,6 +23,7 @@
     <string name="text_download">Download</string>
     <string name="text_delete">Delete</string>
     <string name="text_party_name">Party Name</string>
+    <string name="text_party_address">Party Address</string>
     <string name="text_enter_mobile_number">Enter Mobile Number</string>
     <string name="text_continue">Continue</string>
     <string name="text_select_date">Select Date</string>
@@ -37,4 +38,5 @@
     <string name="text_enter_your_name">Enter your name</string>
     <string name="text_enter_phone_number">Enter phone number</string>
     <string name="text_enter_address">Enter address</string>
+    <string name="text_select_date_range">Select Date Range</string>
 </resources>

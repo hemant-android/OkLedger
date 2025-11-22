@@ -70,8 +70,9 @@ class EditPartyActivity : BaseActivity<ActivityEditPartyBinding>() {
 
 
         binding.btnConfirm.setOnClickListener {
-            val name = binding.etPartyName.text.toString()
-            val mobile = binding.etPartyMobile.text.toString()
+            val name = binding.etPartyName.text.toString().trim()
+            val mobile = binding.etPartyMobile.text.toString().trim()
+            val address = binding.etPartyAddress.text.toString().trim()
             val openingBalance = binding.etOpeningBalance.text.toString().toDoubleOrNull() ?: 0.0
             val openingType = if (binding.rbGiven.isChecked) "Given" else "Received"
 
@@ -86,6 +87,7 @@ class EditPartyActivity : BaseActivity<ActivityEditPartyBinding>() {
                     selectedDate,
                     openingBalance,
                     openingType,
+                    address,
                     ledgerType
 
                 )
@@ -101,7 +103,9 @@ class EditPartyActivity : BaseActivity<ActivityEditPartyBinding>() {
             if (party != null) {
                 binding.etPartyName.setText(party.name)
                 binding.etPartyMobile.setText(party.mobile)
-                binding.etOpeningBalance.setText(party.openingBalance.toString())
+                if (party.openingBalance >0) {
+                    binding.etOpeningBalance.setText(party.openingBalance.toString())
+                }
                 binding.tvSelectedDate.text = DateUtils.formatDateOrTime(party.createdDate)
                 when (party.openingType?.lowercase()) {
                     "received" -> binding.rbReceived.isChecked = true

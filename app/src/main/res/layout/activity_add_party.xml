@@ -42,6 +42,17 @@
             android:padding="@dimen/dimen_12dp"
             android:textSize="@dimen/text_12sp" />
 
+        <EditText
+            android:id="@+id/etPartyAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_12dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="@string/text_party_address"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/dimen_12dp"
+            android:textSize="@dimen/text_12sp" />
+
         <LinearLayout
             android:id="@+id/llDatePicker"
             android:layout_width="match_parent"
@@ -50,7 +61,8 @@
             android:background="@drawable/bg_edittext"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="@dimen/dimen_10dp">
+            android:padding="@dimen/dimen_10dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvSelectedDate"

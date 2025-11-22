@@ -16,23 +16,25 @@ class PartyTransactionViewModel @Inject constructor(private val repository: Ledg
     fun getTransactions(partyId: Int,ledgerType: LedgerType) = repository.getTransactionsForParty(partyId, ledgerType.value)
     fun getPartyById(partyId: Int) = repository.getPartyByIdLive(partyId)
 
-    fun getTransactionsWithBalance(partyId: Int,ledgerType: LedgerType): LiveData<Pair<List<Transaction>, Double>> {
-        val transactionsLive = getTransactions(partyId,ledgerType)
+    /**
+     * Default - Loads all transactions (no date filter)
+     */
+    fun getTransactionsWithBalance(
+        partyId: Int,
+        ledgerType: LedgerType
+    ): LiveData<Pair<List<Transaction>, Double>> {
+
+        val transactionsLive = getTransactions(partyId, ledgerType)
         val partyLive = getPartyById(partyId)
         val result = MediatorLiveData<Pair<List<Transaction>, Double>>()
 
         fun update(txns: List<Transaction>, party: Party?) {
-            if (party == null) {
-                // Only emit deleted signal if transactions and party both loaded
-                if (txns.isNotEmpty()) {
-                    // Party deleted
-                    result.value = Pair(emptyList(), 0.0) // can add flag if needed
-                }
-                return
-            }
+            if (party == null) return
+
             val filteredTxns = txns.filter { it.ledgerType == ledgerType.value }
             val displayList = buildDisplayList(filteredTxns, party)
             val netBalance = calculateNetBalance(filteredTxns, party)
+
             result.value = Pair(displayList, netBalance)
         }
 
@@ -41,8 +43,46 @@ class PartyTransactionViewModel @Inject constructor(private val repository: Ledg
         }
 
         result.addSource(partyLive) { p ->
-            val txns = transactionsLive.value ?: emptyList()
-            update(txns, p)
+            update(transactionsLive.value ?: emptyList(), p)
+        }
+
+        return result
+    }
+
+
+    /**
+     * Date range filter version
+     */
+    fun getTransactionsWithBalance(
+        partyId: Int,
+        ledgerType: LedgerType,
+        fromDate: Long,
+        toDate: Long
+    ): LiveData<Pair<List<Transaction>, Double>> {
+
+        val transactionsLive = getTransactions(partyId, ledgerType)
+        val partyLive = getPartyById(partyId)
+        val result = MediatorLiveData<Pair<List<Transaction>, Double>>()
+
+        fun update(txns: List<Transaction>, party: Party?) {
+            if (party == null) return
+
+            val filteredTxns = txns.filter {
+                it.ledgerType == ledgerType.value && it.date in fromDate..toDate
+            }
+
+            val displayList = buildDisplayList(filteredTxns, party)
+            val netBalance = calculateNetBalance(filteredTxns, party)
+
+            result.value = Pair(displayList, netBalance)
+        }
+
+        result.addSource(transactionsLive) { txns ->
+            update(txns, partyLive.value)
+        }
+
+        result.addSource(partyLive) { p ->
+            update(transactionsLive.value ?: emptyList(), p)
         }
 
         return result

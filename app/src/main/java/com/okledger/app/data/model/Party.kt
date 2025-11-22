@@ -8,6 +8,7 @@ data class Party(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val mobile: String = "",
+    val address: String = "",
     val balance: Double = 0.0,
     val ledgerType: String = "PURCHASES",
     val createdDate: Long = System.currentTimeMillis(),
