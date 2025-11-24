@@ -2,6 +2,7 @@ package com.okledger.app.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import com.okledger.app.base.BaseActivity
 import com.okledger.app.databinding.ActivityEnterMobileBinding
 import com.okledger.app.ui.dashboard.DashboardActivity
@@ -18,12 +19,21 @@ class EnterMobileActivity : BaseActivity<ActivityEnterMobileBinding>() {
 
         binding.btnContinue.setOnClickListener {
             val mobile = binding.etMobile.text.toString().trim()
-            if (mobile.length >= 10) {
-                prefs.setMobile(mobile)
-                startActivity(Intent(this, DashboardActivity::class.java))
-                finish()
-            } else {
-                binding.etMobile.error = "Enter valid mobile"
+            val savedMobile = prefs.getMobile()
+            when {
+                mobile.length < 10 -> {
+                    binding.etMobile.error = "Enter valid mobile"
+                }
+
+                savedMobile == mobile -> {
+                    Toast.makeText(this, "Number is already registered", Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {
+                    prefs.setMobile(mobile)
+                    startActivity(Intent(this, DashboardActivity::class.java))
+                    finish()
+                }
             }
         }
     }
